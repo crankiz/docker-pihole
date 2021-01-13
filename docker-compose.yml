@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     networks:
       pihole_net:
-        ipv4_address: 172.17.53.2
+        ipv4_address: 172.53.0.2
 
   pi-hole:
     image: pihole/pihole:latest
@@ -17,8 +17,8 @@ services:
       - "53:53/udp"
       - "443:443/tcp"
     environment:
-      - ServerIP=172.17.53.3
-      - DNS1='172.17.53.2#5054'
+      - ServerIP=172.53.0.3
+      - DNS1='172.53.0.2#5054'
       - DNS2=''
       - IPv6=false
       - TZ=CET
@@ -32,7 +32,14 @@ services:
       - "./config/dnsmasq:/etc/dnsmasq.d"
     networks:
       pihole_net:
-        ipv4_address: 172.17.53.3
+        ipv4_address: 172.53.0.3
     dns:
       - 127.0.0.1
       - 192.168.1.5
+networks:
+  pihole_net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.53.0.0/29
+       - gateway: 172.53.0.1
