@@ -3,13 +3,11 @@ version: "3"
 services:
   cloudflared:
     container_name: cloudflared
-    image: visibilityspots/cloudflared:arm
-    cap_add:
-      - NET_ADMIN
+    image: visibilityspots/cloudflared
     restart: unless-stopped
     networks:
       pihole_net:
-        ipv4_address: 10.0.0.2
+        ipv4_address: 172.17.53.2
 
   pi-hole:
     container_name: pi-hole
@@ -23,8 +21,8 @@ services:
     cap_add:
       - NET_ADMIN
     environment:
-      - ServerIP=10.0.0.3
-      - DNS1='10.0.0.2#5054'
+      - ServerIP=172.17.53.3
+      - DNS1='172.17.53.2#5054'
       - DNS2=''
       - IPv6=false
       - TZ=CET
@@ -32,13 +30,13 @@ services:
       - WEBPASSWORD=admin
     # Add your own custom hostnames you need for your domain
     extra_hosts:
-      - 'loki.eniac.local:192.168.1.5'
+      - 'proxmox.svedberg.lan:10.0.0.10'
     volumes:
       - "./config/pihole:/etc/pihole"
       - "./config/dnsmasq:/etc/dnsmasq.d"
     networks:
       pihole_net:
-        ipv4_address: 10.0.0.3
+        ipv4_address: 172.17.53.3
     dns:
       - 127.0.0.1
       - 192.168.1.5
@@ -48,4 +46,4 @@ networks:
     driver: bridge
     ipam:
      config:
-       - subnet: 10.0.0.0/29
+       - subnet: 172.17.0.0/16
